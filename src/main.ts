@@ -1,5 +1,8 @@
 import { ErrorMapper } from "utils/ErrorMapper";
-
+import { Kernel } from "./os/kernel";
+import { Process } from "./os/process";
+import empire from "manegerial/empire";
+import { isRespawned } from "utils/respawn"
 declare global {
   /*
     Example types, expand on these or remove them and add your own.
@@ -13,6 +16,7 @@ declare global {
   interface Memory {
     uuid: number;
     log: any;
+    colonies: any
   }
 
   interface CreepMemory {
@@ -25,13 +29,18 @@ declare global {
   namespace NodeJS {
     interface Global {
       log: any;
+      os: Kernel
     }
   }
 }
-
+global.os = new Kernel()
+//Memory.priority_queue = new Array<Process>();
 // When compiling TS to JS and bundling with rollup, the line numbers and file names in error messages change
 // This utility uses source maps to get the line numbers and file names of the original, TS source code
 export const loop = ErrorMapper.wrapLoop(() => {
+    if (Game.time % 100 == 0) {
+        isRespawned()
+    }
   console.log(`Current game tick is ${Game.time} `);
 
   // Automatically delete memory of missing creeps
@@ -40,4 +49,7 @@ export const loop = ErrorMapper.wrapLoop(() => {
       delete Memory.creeps[name];
     }
   }
+  //empire.run()
+  //global.os.run()
+    
 });
