@@ -3,13 +3,13 @@ import { Source, Room } from "misc/environment"
 
 export interface Colony {
     main_room: string
-    adjacent_rooms: Room[]
     spawns: string[]
     workers?: Worker
     local_sources?: Sources[]
-    external_sources?: Sources[]
     controller: string
+    creeps_queue?: Worker[]
 }
+
 
 // Returns resources from specified room
 function get_sources(room: string) {

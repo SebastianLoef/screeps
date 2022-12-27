@@ -5,10 +5,8 @@ import { get_adjacent_rooms } from "utils/tools"
 
 export function add_colony(spawn: any) {
     let room = spawn.room
-    let adjacent_rooms = get_adjacent_rooms(room.name, 2)
     let new_colony: Colony = {
         main_room: room.name,
-        adjacent_rooms: adjacent_rooms,
         spawns: [spawn.id],
         controller: room.controller.id
     }

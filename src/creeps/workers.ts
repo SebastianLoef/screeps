@@ -1,5 +1,13 @@
 export interface Worker {
     kind: string
-    energy: number
-    busy: boolean
+    lvl?: number
+    busy?: boolean
+}
+
+export function new_creep(kind: string, lvl: number) -> Worker{
+    let worker: Worker = {
+        kind = kind,
+        lvl = lvl
+    }
+    return worker
 }

@@ -1,5 +1,12 @@
 import { Room } from "misc/environment"
 
+export function count_source_adj_spots(source_id: string) {
+    let source = Game.getObjectById(source_id)
+    // TODO
+    return 3
+}
+
+
 function is_room_friendly(room_name: string, friendly: boolean){
     return 0
 }
