@@ -1,5 +1,5 @@
 var Empire = require('empire');
-var Kernel = require('kernel');
+var Kernel = require('os.kernel');
 
 var os = {
     run: function() {
