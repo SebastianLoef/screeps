@@ -1,10 +1,4 @@
-import { queueItem } from "sys/priorityQueue";
-
 declare global {
-    interface Memory {
-        priorityQueue: queueItem[];
-    }
+  interface Memory {}
 }
-export function initMemory() {
-
-}
+export function initMemory() {}

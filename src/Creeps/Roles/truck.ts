@@ -1,14 +1,15 @@
-import { findBestSource } from "./Behaviours/findBestSource";
-import { findClosest } from "./Behaviours/findClosest";
-import { findClosestLocalResource } from "./Behaviours/findClosestLocalResource";
+import { findBestSource } from "../Behaviours/findBestSource";
+import { findClosest } from "../Behaviours/findClosest";
+import { findClosestLocalResource } from "../Behaviours/findClosestLocalResource";
 
 
 function targetStorage(creep: Creep) {
-    let controller: StructureController | undefined = creep.room.controller;
-    if (controller && controller.level < 3) {
-        return controller.id;
-    }
     let targets: Structure[] = creep.room.find(FIND_STRUCTURES, {
+        filter: (structure) => {
+            return (structure.structureType == STRUCTURE_STORAGE);
+        }
+    });
+    targets = creep.room.find(FIND_STRUCTURES, {
         filter: (structure) => {
             return ((structure.structureType == STRUCTURE_EXTENSION ||
                 structure.structureType == STRUCTURE_SPAWN) &&
@@ -27,18 +28,14 @@ function targetStorage(creep: Creep) {
     if (targets.length > 0) {
         return findClosest(creep.pos, targets).id;
     }
-    targets = creep.room.find(FIND_STRUCTURES, {
-        filter: (structure) => {
-            return (structure.structureType == STRUCTURE_STORAGE);
-        }
-    });
+    
     if (targets.length > 0) {
         return targets[0].id;
     }
     return undefined;
 }
 function targetSource(creep: Creep) {
-    let target: Id<Structure | Source | Resource> | undefined =  findClosestLocalResource(creep);
+    let target: Id<Structure | Source | Resource | ConstructionSite> | undefined =  findClosestLocalResource(creep);
         if (target){
             return target;
         }
@@ -51,8 +48,7 @@ function targetSource(creep: Creep) {
 }
 
 function setCurrentJob(creep: Creep) {
-    let target = Game.getObjectById(creep.memory.job.target);
-    if (creep.store.getUsedCapacity() == 0 && !(target instanceof Source)){
+    if (creep.store.getUsedCapacity() == 0){
             let target = targetSource(creep);
             creep.memory.job.target = target;
             return 0;
@@ -64,7 +60,7 @@ function setCurrentJob(creep: Creep) {
     return undefined;
 }
 
-export function runMulti(creep: Creep) {
+export function runTruck(creep: Creep) {
     if (!("target" in creep.memory.job)){
         creep.memory.job['target'] = "";
     }
@@ -91,18 +87,12 @@ export function runMulti(creep: Creep) {
         }
         return 0;
     }
-    if (target instanceof StructureContainer || target instanceof StructureLink) {
+    if (target instanceof StructureContainer) {
         if (creep.withdraw(target, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
             creep.moveTo(target);
         }
         return 0;
      
-    }
-    if (target instanceof StructureController) {
-        if (creep.upgradeController(target) == ERR_NOT_IN_RANGE) {
-            creep.moveTo(target);
-        }
-        return 0;
     }
     if (target instanceof Structure) {
         if (creep.transfer(target, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {

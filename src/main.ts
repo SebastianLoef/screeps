@@ -1,6 +1,5 @@
-import { ErrorMapper } from "utils/ErrorMapper";
-import { Empire } from "Empire/empire";
-import { ColonyMemory } from "Colony/memory";
+import { Empire } from "Empire/Empire";
+
 declare global {
   /*
     Example types, expand on these or remove them and add your own.
@@ -14,7 +13,8 @@ declare global {
   interface Memory {
     uuid: number;
     log: any;
-    colonies: {[name: string]: ColonyMemory};
+    colonies: { [key: string]: ColonyMemory };
+    creeps: { [key: string]: CreepMemory };
   }
 
   // Syntax for adding proprties to `global` (ex "global.log")
@@ -24,17 +24,18 @@ declare global {
     }
   }
   function queue(func: Function, priority: number, occurance?: number): void;
-
 }
-var empire = new Empire()
 
 // When compiling TS to JS and bundling with rollup, the line numbers and file names in error messages change
 // This utility uses source maps to get the line numbers and file names of the original, TS source code
-export const loop = ErrorMapper.wrapLoop(() => {
-  console.log(`Current game tick is ${Game.time}`);
+const empire = new Empire();
+export const loop = () => {
   if (Game.cpu.bucket == 10000) {
     Game.cpu.generatePixel();
     console.log("Generated pixel");
   }
+  if (Game.cpu.bucket < 500) {
+    console.log("Bucket is low: ", Game.cpu.bucket);
+  }
   empire.run();
-});
+};

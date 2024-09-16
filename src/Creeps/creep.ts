@@ -1,6 +1,9 @@
-import { runMulti } from "./multi";
-import { runHarvester } from "./harvester";
+import { runMulti } from "./Roles/multi";
+import { runHarvester } from "./Roles/harvester";
 import { chargeCreep } from "./Behaviours/chargeCreep";
+import { recycleCreep } from "./Behaviours/recycleCreep";
+import { runTruck } from "./Roles/truck";
+import { runBuilder } from "./Roles/builder";
 
 function removeFromMemory (creep_id: string) {
     //let colonyName: string = Memory.creeps[creep_id].colonyName;
@@ -27,6 +30,11 @@ export function runCreep (creep_id: string) {
         removeFromMemory(creep_id);
         return;
     }
+    // Suicide creep if it has a suicide flag
+    if (creep.memory.suicide){
+        recycleCreep(creep);
+    }
+    // Charge creep if it's about to die
     if (creep.memory.role != "multi" && creep.ticksToLive && creep.ticksToLive < 200){
         creep.memory.charging = true;
     }
@@ -42,7 +50,17 @@ export function runCreep (creep_id: string) {
         case "multi":
             runMulti(creep);
             break;
+        case "harvester":
+            runHarvester(creep);
+            break;
+        case "truck":
+            runTruck(creep);
+            break;
+        case "builder":
+            runBuilder(creep);
+            break;
         default:
-            runMulti(creep);
+            console.log("No instructions for creep of with role: ", creep.memory.role)
+            break;
     }
 }
